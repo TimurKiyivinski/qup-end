@@ -93,7 +93,7 @@ const Schema = mongoose.Schema
 
   // Update queue current number
   app.post('/queue/:id', (req, res) => {
-    Queue.findOne({ _id: req.params.id }, (err, queue) => {
+    Queue.findOne({ _id: req.params.id, token: req.body.token }, (err, queue) => {
       if (!err && queue != null) {
         const updateCurrent = () => {
           // Find queue participants
