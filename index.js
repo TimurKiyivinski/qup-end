@@ -172,5 +172,5 @@ const Schema = mongoose.Schema
   })
 
   // Serve application
-  app.listen(3000)
+  app.listen(process.env.PORT || 3000)
 })()
