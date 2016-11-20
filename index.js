@@ -8,7 +8,8 @@ const Schema = mongoose.Schema
   const app = express()
 
   // MongoDB
-  mongoose.connect('mongodb://localhost/qup')
+  console.log(`Connecting to MongoDB via ${process.env.MONGODB_URI}`)
+  mongoose.connect(process.env.MONGODB_URI)
 
   const Queue = mongoose.model('Queue', {
     name: String,
