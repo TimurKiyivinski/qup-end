@@ -69,7 +69,7 @@ Response:
 ```
 
 ### participate in queue
-**POST** to `/queue/participate/:id`
+**GET** to `/queue/participate/:id`
 
 ```JSON
 {

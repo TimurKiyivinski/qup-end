@@ -154,7 +154,7 @@ const Schema = mongoose.Schema
   })
 
   // Participate in a queue
-  app.post('/queue/participate/:id', (req, res) => {
+  app.get('/queue/participate/:id', (req, res) => {
     Participant.create({ queueId: req.params.id, done: false }, (err, participant) => {
       if (!err) {
         res.json({
