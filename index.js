@@ -14,6 +14,7 @@ const Schema = mongoose.Schema
   const Queue = mongoose.model('Queue', {
     name: String,
     token: String,
+    limit: Number,
     current: Schema.Types.ObjectId
   })
 
@@ -32,7 +33,8 @@ const Schema = mongoose.Schema
     if (req.body.name) {
       Queue.create({
         name: req.body.name,
-        token: req.body.token
+        token: req.body.token,
+        limit: req.body.limit || 0
       }, (err, queue) => {
         if (!err) {
           res.json({
@@ -164,18 +166,33 @@ const Schema = mongoose.Schema
   // Participate in a queue
   app.get('/queue/participate/:id', (req, res) => {
     const token = Math.random().toString(36).substring(10)
-    Participant.create({ queueId: req.params.id, token: token, done: false }, (err, participant) => {
+    Queue.findOne({ _id: req.params.id }, (err, queue) => {
       if (!err) {
-        res.json({
-          error: false,
-          _id: participant._id,
-          token: participant.token,
-          queueId: participant.queueId
-        })
-      } else {
-        res.json({
-          error: true,
-          message: 'Failed to create queue participation'
+        Participant.find({ queueId: req.params.id }, (err, participants) => {
+          if (!err) {
+            if (queue.limit > 0 && participants.length > queue.limit) {
+              res.json({
+                error: true,
+                message: `Queue limit of ${queue.limit} reached`
+              })
+            } else {
+              Participant.create({ queueId: req.params.id, token: token, done: false }, (err, participant) => {
+                if (!err) {
+                  res.json({
+                    error: false,
+                    _id: participant._id,
+                    token: participant.token,
+                    queueId: participant.queueId
+                  })
+                } else {
+                  res.json({
+                    error: true,
+                    message: 'Failed to create queue participation'
+                  })
+                }
+              })
+            }
+          }
         })
       }
     })
