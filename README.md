@@ -75,6 +75,25 @@ Response:
 {
   "error": false,
   "_id": "58317557def0ec26c8f5e97b",
+  "token": "e3i4vch8vocvoyldi",
   "queueId": "58317530def0ec26c8f5e97a"
+}
+```
+
+### leave queue
+**POST** to `/queue/unparticipate/:id`
+
+Data:
+```JSON
+{
+    "token": "random_string"
+}
+```
+
+Response:
+```JSON
+{
+  "error": false,
+  "message": "..."
 }
 ```

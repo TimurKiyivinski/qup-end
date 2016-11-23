@@ -19,6 +19,7 @@ const Schema = mongoose.Schema
 
   const Participant = mongoose.model('Participant', {
     queueId: Schema.Types.ObjectId,
+    token: String,
     done: Boolean
   })
 
@@ -105,20 +106,27 @@ const Schema = mongoose.Schema
                 .map(participant => participant._id)[0]
 
               Queue.findOneAndUpdate({ _id: queue._id }, { current: current }, err => {
-                queue.save(err => {
-                  if (!err) {
-                    res.json({
-                      error: false,
-                      _id: queue.id,
-                      current: current
-                    })
-                  } else {
-                    res.json({
-                      error: true,
-                      message: 'Error saving queue'
-                    })
-                  }
-                })
+                if (!err) {
+                  queue.save(err => {
+                    if (!err) {
+                      res.json({
+                        error: false,
+                        _id: queue.id,
+                        current: current
+                      })
+                    } else {
+                      res.json({
+                        error: true,
+                        message: 'Error saving queue'
+                      })
+                    }
+                  })
+                } else {
+                  res.json({
+                    error: true,
+                    message: 'Error saving queue'
+                  })
+                }
               })
             } else {
               res.json({
@@ -155,17 +163,36 @@ const Schema = mongoose.Schema
 
   // Participate in a queue
   app.get('/queue/participate/:id', (req, res) => {
-    Participant.create({ queueId: req.params.id, done: false }, (err, participant) => {
+    const token = Math.random().toString(36).substring(10)
+    Participant.create({ queueId: req.params.id, token: token, done: false }, (err, participant) => {
       if (!err) {
         res.json({
           error: false,
           _id: participant._id,
+          token: participant.token,
           queueId: participant.queueId
         })
       } else {
         res.json({
           error: true,
           message: 'Failed to create queue participation'
+        })
+      }
+    })
+  })
+
+  // Leave in a queue
+  app.post('/queue/unparticipate/:id', (req, res) => {
+    Participant.findOneAndUpdate({ _id: req.params.id, token: req.body.token }, { done: true }, err => {
+      if (!err) {
+        res.json({
+          error: false,
+          message: 'Success'
+        })
+      } else {
+        res.json({
+          error: true,
+          message: 'Failed to leave queue'
         })
       }
     })
