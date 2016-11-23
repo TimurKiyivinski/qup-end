@@ -170,7 +170,7 @@ const Schema = mongoose.Schema
       if (!err) {
         Participant.find({ queueId: req.params.id }, (err, participants) => {
           if (!err) {
-            if (queue.limit > 0 && participants.length > queue.limit) {
+            if (queue.limit > 0 && participants.length >= queue.limit) {
               res.json({
                 error: true,
                 message: `Queue limit of ${queue.limit} reached`
