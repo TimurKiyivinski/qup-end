@@ -20,6 +20,7 @@ Data:
 ```JSON
 {
     "name": "queue_name",
+    "limit": "optional_queue_limit",
     "token": "random_string"
 }
 ```
